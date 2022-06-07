@@ -1,0 +1,132 @@
+﻿@model List<AppMarvel.Models.DB.ConteoHeroe>
+
+
+
+@{
+    
+    ViewData["Title"] = "Catalogo";
+}
+@foreach(var conteoHeroe in Model)
+                        {
+                        <input type="hidden" id="@conteoHeroe.Codigo" value="@conteoHeroe.Cantidad">
+                        
+                        }
+
+
+                        
+    
+
+<div class="text-center">
+    <h1 class="display-4">Catálogo de heroes Marvel</h1>
+    <section id="gallery">
+        <div class="container">
+            <div class="col-lg-3 mb-3"></div>
+            <div class="col-lg-6 mb-6"><input id="myInput" type="text" class="form-control" placeholder="Search.."></div>
+            <div class="col-lg-3 mb-3"></div>
+    
+        <div class="row" id="marvel-row">
+            
+            
+
+            
+        </div>
+   
+
+    </div>
+    </section>
+    
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+        catalogo();
+  $('#myInput').on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $(".card").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
+});
+
+
+function catalogo() {
+    const marvel = {
+    render: () => {
+        //1495b32765c0d389c147cec3c9db159bd84705e0c5ed6f0fbc8f1454c82d5f70da7247880
+        //fd4236d3d8e842a4c49b06b7fcfcc040 md5
+        const urlAPI = 'https://gateway.marvel.com:443/v1/public/characters?ts=1&apikey=5ed6f0fbc8f1454c82d5f70da7247880&hash=fd4236d3d8e842a4c49b06b7fcfcc040';
+        const container = document.querySelector('#marvel-row');
+        let contentHTML = '';
+
+        fetch(urlAPI)
+            .then(res => res.json())
+            .then((json) => {
+                console.log(json, 'RES:JSON');
+                //console.log(json.data.results[0].name);
+                var i = 0;
+                for (const hero of json.data.results) {
+                    let urlHero = hero.thumbnail.path;
+                    //console.log(urlHero);
+                    if (hero.description == '') {
+                        var descripcion = "'No hay descripcion'";
+                    } else {
+                        var descripcion = "'"+hero.description+"'";
+                    }
+
+                    var comics = "<ul>";
+                    for (const com of hero.comics.items) {
+                        
+                        var codigoHTML = "<li>"+com.name+"</li>";
+                        comics = comics + codigoHTML;
+                    }
+                    var final = comics + "</ul>";
+
+                    var codigo=$("#" + hero.id + "").val();
+                    
+                    const nombre = hero.name;
+                   contentHTML += '<div class="col-lg-3 mb-3"> <div class="card"> <img  val="'+hero.name+'" src="'+hero.thumbnail.path+'.'+hero.thumbnail.extension+'" alt="" class="card-img-top"  height="200"> <div class="card-body" id="MyDIV"> <h5 class="card-title" id="titulo">'+hero.name+'</h5> <div id="descripcion'+hero.id+'" style="display:none;"  >'+descripcion+'</p><p><b>Comics</b></p><p>'+final+'</p></div> <button id="boton'+hero.id+'"  class="btn btn-outline-success btn-sm" onclick="mostrarDescripcion('+hero.id+')">Descripción</button> <button class="btn btn-outline-danger btn-sm"  onclick="enviarlike('+hero.id+')"><i class="far fa-heart"></i></button> <button href="" class="btn btn-primary btn-sm active" id="cantidadL">'+codigo+'</button> </div> </div> </div>';
+                
+                    
+               
+               }
+                  
+               
+               container.innerHTML = contentHTML;
+                
+           
+            })
+    }
+};
+
+marvel.render();
+
+}
+
+
+function mostrarDescripcion(id) {
+        $("#descripcion" + id + "").show();
+
+}
+
+function enviarlike(id) {
+   
+    
+    $.ajax({
+            type: "POST",
+            url: "@Url.Action("Catalogo")",
+            data: {codigo: id},
+            dataType: "text",
+            success: function (msg) {
+                alert(msg);
+            },
+            error: function (req, status, error) {
+                alert(msg);
+            }
+        });
+    
+}
+
+
+
+</script>

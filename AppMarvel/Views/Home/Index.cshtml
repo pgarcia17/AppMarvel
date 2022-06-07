@@ -1,0 +1,49 @@
+﻿@model List<AppMarvel.Models.DB.Top5>
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bienvenido</h1>
+    <div class="container">
+        <div class="row" id="marvel-row">
+            <div class="col-lg-2 mb-2"></div>
+            <div class="col-lg-8 mb-8"">
+                <table class="table table-bordered">
+                    <thead>
+                         <tr>
+                            <td><b>No.</b></td>
+                            <td colspan="4"><h5><b>Top 5 de popularidad Heroes</b></h5></td>
+                         </tr>
+                    </thead>
+                    <tbody>
+                
+                        @{
+                            int i=1;
+                            
+                        }
+             
+                @foreach(var top5 in Model)
+                {
+                <tr>
+                    <td><b>@i</b></td>
+                    <td><b>Heroe:</b></td>
+                    <td>@top5.Name</td>
+                    <td><b>Cantidad:</b></td>
+                    <td>@top5.Cantidad</td>            
+                </tr>
+                i=i+1;
+                }
+                    </tbody>
+                    </table>
+
+            </div>
+            
+        </div>
+    </div>
+
+    
+    
+</div>
